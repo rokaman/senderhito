@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senderhito · Casa Rural</title>
+  <meta name="description" content="Senderhito - Tu refugio rural en plena naturaleza." />
+
+  <!-- Tipografías elegantes (con fallbacks nativos si no hay conexión) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       VARIABLES Y ESTILOS BASE
+       ========================================================================== */
+    :root {
+      --color-text: #f7f5f0;
+      --color-text-muted: rgba(247, 245, 240, 0.78);
+      --color-accent: #d4b886; /* Tono tierra / piedra cálida */
+      --color-glass: rgba(20, 22, 19, 0.68);
+      --color-glass-border: rgba(247, 245, 240, 0.16);
+      --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-handwriting: 'Caveat', 'Brush Script MT', cursive;
+      --transition-speed: 1.5s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #121411;
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       FONDO ROTORAMA (SLIDESHOW CON EFECTO KEN BURNS)
+       ========================================================================== */
+    .rotorama-container {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+      background-color: #141613;
+    }
+
+    .rotorama-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transform: scale(1.06);
+      transition: opacity var(--transition-speed) ease-in-out, transform 9s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .rotorama-slide.active {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 1;
+    }
+
+    /* ==========================================================================
+       TEXTO CONFIGURABLE SOBRE CADA DIAPOSITIVA DEL ROTORAMA
+       ========================================================================== */
+    .slide-caption-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -44%);
+      width: 100%;
+      max-width: min(90vw, 820px);
+      padding: 1.25rem 1.75rem;
+      text-align: center;
+      color: var(--color-text);
+      opacity: 0;
+      transition: opacity 1.1s ease 0.25s, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .rotorama-slide.active .slide-caption-wrapper {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .slide-caption-text {
+      line-height: 1.32;
+      letter-spacing: 0.01em;
+      word-wrap: break-word;
+    }
+
+    /* Tipos de letra configurables por foto */
+    .font-serif {
+      font-family: var(--font-serif);
+    }
+    .font-sans {
+      font-family: var(--font-sans);
+      letter-spacing: 0.02em;
+    }
+    .font-handwriting {
+      font-family: var(--font-handwriting);
+      line-height: 1.18;
+      letter-spacing: 0.01em;
+    }
+
+    /* Tamaños responsivos configurables por foto mediante clamp() */
+    .size-pequeno {
+      font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+    }
+    .size-mediano {
+      font-size: clamp(1.45rem, 3.2vw, 2.35rem);
+    }
+    .size-grande {
+      font-size: clamp(1.85rem, 4.4vw, 3.25rem);
+    }
+    .size-extra {
+      font-size: clamp(2.25rem, 5.6vw, 4.2rem);
+    }
+
+    /* Estilos de resaltado generales del bloque (highlightStyle) */
+    .style-fondo {
+      background: rgba(16, 18, 15, 0.56);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(247, 245, 240, 0.16);
+      border-radius: 18px;
+      padding: clamp(1.15rem, 3vw, 2.1rem) clamp(1.35rem, 4vw, 2.75rem);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
+    }
+
+    .style-sombra .slide-caption-text {
+      text-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.85),
+        0 6px 28px rgba(0, 0, 0, 0.72),
+        0 0 2px rgba(0, 0, 0, 0.9);
+    }
+
+    .style-subrayado .slide-caption-text {
+      text-shadow: 0 3px 18px rgba(0, 0, 0, 0.65);
+    }
+
+    /* Resaltado de palabras concretas marcadas con ==texto== o <mark> */
+    .slide-caption-text mark,
+    .slide-highlight {
+      background: linear-gradient(120deg, rgba(212, 184, 134, 0.34) 0%, rgba(212, 184, 134, 0.52) 100%);
+      color: #fffdf8;
+      padding: 0.05em 0.35em;
+      border-radius: 6px;
+      border-bottom: 2px solid var(--color-accent);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .style-subrayado .slide-caption-text mark,
+    .style-subrayado .slide-highlight {
+      background: transparent;
+      color: var(--color-accent);
+      padding: 0 0.1em;
+      border-radius: 0;
+      border-bottom: 2.5px solid var(--color-accent);
+    }
+
+    .slide-caption-text strong {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .slide-caption-text em {
+      font-style: italic;
+      color: #f3e5c8;
+    }
+
+    /* Capa de viñeta sutil superior e inferior para garantizar legibilidad */
+    .rotorama-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 12, 10, 0.65) 0%,
+        rgba(10, 12, 10, 0.12) 28%,
+        rgba(10, 12, 10, 0.12) 72%,
+        rgba(10, 12, 10, 0.68) 100%
+      );
+    }
+
+    /* ==========================================================================
+       CABECERA: LOGO ARRIBA IZQUIERDA + MENÚ SUPERIOR
+       ========================================================================== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2.2rem;
+      gap: 1rem;
+    }
+
+    /* Contenedor del logo adaptado para que encaje limpio en la esquina superior izquierda */
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+      opacity: 0.92;
+    }
+
+    /* El logo adjunto tiene fondo negro y trazo claro; al invertirlo o fundirlo con screen
+       se integra de forma limpia y reducida sobre las fotos */
+    .brand-logo img {
+      height: 52px;
+      width: auto;
+      max-width: 210px;
+      object-fit: contain;
+      display: block;
+      mix-blend-mode: screen;
+      filter: contrast(1.15) brightness(1.1);
+    }
+
+    /* Respaldo SVG del hito de piedras + tipografía si la imagen externa no carga */
+    .brand-fallback {
+      display: none;
+      align-items: center;
+      gap: 0.65rem;
+      color: var(--color-text);
+    }
+
+    .brand-fallback svg {
+      height: 44px;
+      width: auto;
+      fill: currentColor;
+    }
+
+    .brand-fallback span {
+      font-family: var(--font-sans);
+      font-size: 1.55rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    /* Menú de navegación superior */
+    .main-nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 0.45rem 0.2rem;
+      position: relative;
+      transition: color 0.3s ease;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background-color: var(--color-accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--color-accent);
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    /* Botón hamburguesa para tablet / móvil */
+    .menu-toggle {
+      display: none;
+      background: rgba(20, 22, 19, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--color-glass-border);
+      color: var(--color-text);
+      border-radius: 10px;
+      padding: 0.55rem 0.65rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       ESQUINA INFERIOR IZQUIERDA: INSTAGRAM + INDICADORES ROTORAMA
+       ========================================================================== */
+    .bottom-left-social {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 2.2rem;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .instagram-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(20, 22, 19, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--color-glass-border);
+      color: var(--color-text);
+      text-decoration: none;
+      transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .instagram-link:hover {
+      transform: translateY(-3px) scale(1.06);
+      background: rgba(212, 184, 134, 0.22);
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .instagram-link svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    /* Puntos indicadores discretos en la esquina inferior derecha */
+    .slide-indicators {
+      position: fixed;
+      bottom: 1.85rem;
+      right: 2.2rem;
+      z-index: 20;
+      display: flex;
+      gap: 0.55rem;
+    }
+
+    .indicator-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(247, 245, 240, 0.35);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-accent);
+      transform: scale(1.3);
+    }
+
+    /* ==========================================================================
+       MODAL / PANEL PARA CONTENIDO MARKDOWN DE CADA SECCIÓN
+       ========================================================================== */
+    .md-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: rgba(10, 12, 10, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5.5rem 1.25rem 4.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .md-modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .md-modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 780px;
+      max-height: 100%;
+      overflow-y: auto;
+      background: var(--color-glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--color-glass-border);
+      border-radius: 20px;
+      padding: 2.2rem 2.4rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      transform: translateY(14px);
+      transition: transform 0.35s ease;
+    }
+
+    .md-modal-backdrop.open .md-modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-close-btn {
+      position: sticky;
+      top: 0;
+      float: right;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--color-glass-border);
+      color: var(--color-text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--color-accent);
+      color: #141613;
+    }
+
+    /* Estilos tipográficos para el contenido renderizado desde Markdown */
+    .markdown-body h1 {
+      font-family: var(--font-serif);
+      font-size: 2.15rem;
+      font-weight: 500;
+      color: var(--color-accent);
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .markdown-body h2 {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 500;
+      color: var(--color-text);
+      margin: 1.5rem 0 0.65rem;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      margin: 1.2rem 0 0.45rem;
+    }
+
+    .markdown-body p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--color-text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .markdown-body ul,
+    .markdown-body ol {
+      margin: 0.75rem 0 1.2rem 1.4rem;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.35rem;
+    }
+
+    .markdown-body strong {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+
+    .markdown-body blockquote {
+      border-left: 3px solid var(--color-accent);
+      padding-left: 1rem;
+      margin: 1.1rem 0;
+      font-style: italic;
+      color: var(--color-text);
+    }
+
+    .markdown-body a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ==========================================================================
+       DISEÑO RESPONSIVE (TABLET Y MÓVIL)
+       ========================================================================== */
+    @media (max-width: 860px) {
+      .site-header {
+        padding: 0.9rem 1.25rem;
+      }
+
+      .brand-logo img {
+        height: 42px;
+        max-width: 175px;
+      }
+
+      .menu-toggle {
+        display: inline-flex;
+      }
+
+      .main-nav {
+        position: fixed;
+        top: 4.3rem;
+        right: 1.25rem;
+        left: 1.25rem;
+        background: rgba(18, 20, 17, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--color-glass-border);
+        border-radius: 16px;
+        padding: 1rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+      }
+
+      .main-nav.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .main-nav ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+      }
+
+      .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      .bottom-left-social {
+        bottom: 1.15rem;
+        left: 1.25rem;
+      }
+
+      .slide-indicators {
+        bottom: 1.45rem;
+        right: 1.25rem;
+      }
+
+      .md-modal-card {
+        padding: 1.6rem 1.35rem;
+        border-radius: 16px;
+      }
+
+      .markdown-body h1 {
+        font-size: 1.75rem;
+      }
+
+      .slide-caption-wrapper {
+        max-width: 92vw;
+        padding: 1rem 1.15rem;
+      }
+
+      .style-fondo {
+        padding: 1rem 1.25rem;
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. FONDO ROTORAMA A PANTALLA COMPLETA
+       ======================================================================== -->
+  <div id="rotorama" class="rotorama-container" aria-hidden="true"></div>
+  <div class="rotorama-vignette" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       2. BARRA SUPERIOR: LOGO (IZQUIERDA) + MENÚ (DERECHA)
+       ======================================================================== -->
+  <header class="site-header">
+    <!-- Logo Senderhito -->
+    <a href="#inicio" class="brand-logo" id="logoHomeBtn" aria-label="Senderhito - Inicio">
+      <!-- Apunta a tu archivo local logo_shito_negro.jpg -->
+      <img
+        src="https://www.senderhito.com/wp-content/uploads/2016/02/logo_shito_negro.png"
+        alt="Logo Casa Rural Senderhito"
+        onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='inline-flex';"
+      />
+      <!-- Fallback vectorial limpio con el hito de piedras por si aún no está la imagen en la carpeta -->
+      <div id="logoFallback" class="brand-fallback">
+        <svg viewBox="0 0 64 80" aria-hidden="true">
+          <path d="M32 4 C28 4 26 9 28 12 C30 14 35 14 37 11 C38 8 35 4 32 4 Z" />
+          <path d="M23 16 C19 17 18 23 22 25 C27 27 39 27 43 24 C46 21 44 16 39 15 C34 14 27 15 23 16 Z" />
+          <path d="M18 30 C13 33 12 45 16 51 C21 56 42 56 47 50 C52 44 50 32 44 29 C37 26 24 27 18 30 Z" />
+          <path d="M8 58 C3 62 2 71 7 74 C15 78 49 78 57 74 C62 71 60 61 54 58 C45 54 17 54 8 58 Z" />
+        </svg>
+        <span>senderhito</span>
+      </div>
+    </a>
+
+    <!-- Botón menú móvil -->
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Abrir menú de navegación"
+      aria-expanded="false"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="7" x2="21" y2="7"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="17" x2="21" y2="17"></line>
+      </svg>
+    </button>
+
+    <!-- Navegación principal -->
+    <nav class="main-nav" id="mainNav" aria-label="Menú principal">
+      <ul>
+        <li><button class="nav-link" data-section="galeria">Galería</button></li>
+        <li><button class="nav-link" data-section="donde-estamos">Dónde estamos</button></li>
+        <li><button class="nav-link" data-section="contacto">Contacto</button></li>
+        <li><button class="nav-link" data-section="tarifa">Tarifa</button></li>
+        <li><button class="nav-link" data-section="calendario">Calendario</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ========================================================================
+       3. ESQUINA INFERIOR IZQUIERDA: INSTAGRAM + INDICADORES DE FOTOS
+       ======================================================================== -->
+  <div class="bottom-left-social">
+    <a
+      href="https://www.instagram.com/senderhito"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="instagram-link"
+      aria-label="Síguenos en Instagram (@senderhito)"
+      title="Instagram @senderhito"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+      </svg>
+    </a>
+  </div>
+
+  <div id="slideIndicators" class="slide-indicators" aria-label="Selector de fotografías"></div>
+
+  <!-- ========================================================================
+       4. PANEL MODAL TRANSLÚCIDO PARA MOSTRAR CONTENIDO EN MARKDOWN
+       ======================================================================== -->
+  <div id="mdModal" class="md-modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="md-modal-card">
+      <button id="closeModalBtn" class="modal-close-btn" aria-label="Cerrar ventana">&times;</button>
+      <article id="mdContent" class="markdown-body"></article>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       5. JAVASCRIPT: CONFIGURACIÓN, ROTORAMA Y PARSER MARKDOWN
+       ======================================================================== -->
+  <script>
+    /**
+     * ========================================================================
+     * BLOQUE DE CONFIGURACIÓN PRINCIPAL (EDITABLE POR TI)
+     * ========================================================================
+     * 1. intervalSeconds: Segundos que permanece cada fotografía en pantalla.
+     * 2. slides: Lista de diapositivas del rotorama. Cada objeto admite:
+     *    - image: Ruta de tu foto local (ej. 'fotos/fachada.jpg') o URL.
+     *    - text: Texto centrado sobre la foto. Soporta:
+     *        * **negritas**
+     *        * *cursivas*
+     *        * ==texto resaltado==
+     *        * Saltos de línea (\n) o HTML seguro (<span>, <mark>, <strong>, <em>)
+     *    - fontFamily: 'serif' | 'sans' | 'handwriting' (o cualquier fuente CSS)
+     *    - fontSize: 'pequeno' | 'mediano' | 'grande' | 'extra' (o valor CSS como '2.2rem')
+     *    - highlightStyle: 'sombra' | 'fondo' | 'subrayado'
+     */
+    const CONFIG = {
+      intervalSeconds: 7,
+      slides: [
+        {
+          image: 'https://www.senderhito.com/wp-content/uploads/2025/02/IMG-20231130-WA0004.jpg',
+          text:  'Nuestra casa es una ==Slow Home==  \ndiseñada para proporcionar bienestar y \nser respetuosa con el medio ambiente.',
+		  fontFamily: 'serif',
+          fontSize: 'grande',
+          highlightStyle: 'sombra'
+        },
+        {
+          image: 'https://www.senderhito.com/wp-content/uploads/2016/02/comedor-galeriapq.jpg',
+          text: 'Orientada al sur para **disfrutar** de la luz desde el amanecer hasta el atardecer.',
+		  fontFamily: 'sans',
+          fontSize: 'mediano',
+          highlightStyle: 'fondo'
+        },
+        {
+		  image: 'https://www.senderhito.com/wp-content/uploads/2016/02/sofa-cojines.jpg',
+          text:  'Construida con ==materiales nobles== \n(piedra, madera, hierro ...)',
+          fontFamily: 'handwriting',
+          fontSize: 'extra',
+          highlightStyle: 'subrayado'
+        },
+        {
+          image: 'https://www.senderhito.com/wp-content/uploads/2016/02/P1020493pq.jpg',
+          text: '**Desacelerate** y reconecta con tu esencia \n\n en una casa que permite descansar y recuperar energía.*',
+          fontFamily: 'serif',
+          fontSize: 'pequeno',
+          highlightStyle: 'fondo'
+        },
+		{
+          image: 'https://www.senderhito.com/wp-content/uploads/2016/02/mini_1-1.jpg',
+          text: 'Un espacio donde tus **mascotas** pueden\n disfrutar al menos tanto como tu...*',
+          fontFamily: 'serif',
+          fontSize: 'pequeno',
+          highlightStyle: 'fondo'
+        }
+      ]
+    };
+
+
+    /**
+     * ========================================================================
+     * CONTENIDOS EN FORMATO MARKDOWN (MD) PARA CADA OPCIÓN DEL MENÚ
+     * ========================================================================
+     * Puedes reemplazar libremente el texto en Markdown de cada sección cuando
+     * me facilites tus textos definitivos.
+     */
+    const CONTENIDO_MD = {
+      'galeria': `
+# Galería de Senderhito
+
+Un recorrido por cada rincón de nuestra casa rural, pensada para descansar y desconectar en plena naturaleza.
+
+- **Exterior y entorno:** Jardín privado, porche de piedra y vistas abiertas a la montaña.
+- **Salón con chimenea:** Espacios cálidos con madera natural y luz durante todo el día.
+- **Habitaciones:** Dormitorios amplios, ropa de cama de algodón y silencio absoluto.
+- **Cocina equipada:** Todo lo necesario para disfrutar sin prisas.
+
+> *Próximamente añadiremos aquí el álbum completo con tus fotografías.*
+      `,
+      'donde-estamos': `
+# Dónde estamos
+
+**Senderhito** se encuentra en un enclave privilegiado rodeado de senderos, bosques autóctonos y aire puro.
+
+- **Entorno:** Acceso directo a rutas de senderismo señalizadas por hitos de piedra.
+- **Cómo llegar:** Acceso cómodo por carretera hasta la entrada de la casa con zona de aparcamiento privado.
+- **Coordenadas / Localidad:** *(Pendiente de añadir tu dirección o enlace de Google Maps)*.
+      `,
+      'contacto': `
+# Contacto
+
+Estaremos encantados de resolver tus dudas y ayudarte a preparar tu escapada a **Senderhito**.
+
+- **Teléfono / WhatsApp:** *(Pendiente de añadir)*
+- **Correo electrónico:** *(Pendiente de añadir)*
+- **Instagram:** [@senderhito](https://www.instagram.com/senderhito)
+
+Escríbenos indicándonos las fechas aproximadas y el número de personas.
+      `,
+      'tarifa': `
+# Tarifas
+
+Nuestros precios se adaptan a la temporada y duración de la estancia (alquiler íntegro de la casa).
+
+- **Temporada Baja:** Consultar precio por noche *(estancia mínima 2 noches)*.
+- **Temporada Alta y Puentes:** Consultar disponibilidad y condiciones especiales.
+- **Incluye:** Leña para la chimenea, ropa de cama, toallas y limpieza final.
+      `,
+      'calendario': `
+# Calendario y Disponibilidad
+
+Consulta las fechas libres para tu próxima estancia en **Senderhito**.
+
+- **Fines de semana:** Entrada viernes tarde · Salida domingo tarde.
+- **Semanas completas:** Descuentos especiales para estancias de 7 o más noches.
+
+> Para confirmar disponibilidad exacta en tiempo real, contáctanos directamente por teléfono o mensaje en Instagram.
+      `
+    };
+
+    /* ========================================================================
+       MOTOR DEL ROTORAMA (SLIDESHOW + TEXTOS ENRIQUECIDOS POR DIAPOSITIVA)
+       ======================================================================== */
+    (function initRotorama() {
+      const container = document.getElementById('rotorama');
+      const indicatorsContainer = document.getElementById('slideIndicators');
+      const slidesConfig = CONFIG.slides || [];
+      let currentIndex = 0;
+      let timer = null;
+
+      if (slidesConfig.length === 0) return;
+
+      // Formatea el texto de cada foto soportando **negritas**, *cursivas*, ==resaltados== y saltos de línea
+      function formatSlideText(rawText) {
+        if (!rawText) return '';
+        return rawText
+          .trim()
+          .replace(/==(.+?)==/g, '<mark class="slide-highlight">$1</mark>')
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/\n/g, '<br />');
+      }
+
+      // Mapeo de clases predefinidas o valores CSS directos
+      const presetFonts = ['serif', 'sans', 'handwriting'];
+      const presetSizes = ['pequeno', 'mediano', 'grande', 'extra'];
+      const presetStyles = ['sombra', 'fondo', 'subrayado'];
+
+      // Crear las capas de diapositivas, textos e indicadores
+      slidesConfig.forEach((item, index) => {
+        const slideData = typeof item === 'string' ? { image: item } : item;
+
+        const slide = document.createElement('div');
+        slide.className = 'rotorama-slide' + (index === 0 ? ' active' : '');
+        slide.style.backgroundImage = `url('${slideData.image}')`;
+
+        // Si la foto tiene texto configurado, creamos su capa centrada
+        if (slideData.text && slideData.text.trim() !== '') {
+          const wrapper = document.createElement('div');
+          const styleKey = presetStyles.includes(slideData.highlightStyle)
+            ? slideData.highlightStyle
+            : 'sombra';
+          wrapper.className = `slide-caption-wrapper style-${styleKey}`;
+
+          const textEl = document.createElement('div');
+          textEl.className = 'slide-caption-text';
+
+          // Aplicar tipo de letra (preset o fuente CSS directa)
+          const fontVal = (slideData.fontFamily || 'serif').trim();
+          if (presetFonts.includes(fontVal)) {
+            textEl.classList.add(`font-${fontVal}`);
+          } else {
+            textEl.style.fontFamily = fontVal;
+          }
+
+          // Aplicar tamaño (preset o valor CSS directo como '2rem' / 'clamp(...)')
+          const sizeVal = (slideData.fontSize || 'mediano').trim();
+          if (presetSizes.includes(sizeVal)) {
+            textEl.classList.add(`size-${sizeVal}`);
+          } else {
+            textEl.style.fontSize = sizeVal;
+          }
+
+          textEl.innerHTML = formatSlideText(slideData.text);
+          wrapper.appendChild(textEl);
+          slide.appendChild(wrapper);
+        }
+
+        container.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.className = 'indicator-dot' + (index === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Ver fotografía ${index + 1}`);
+        dot.addEventListener('click', () => {
+          goToSlide(index);
+          restartTimer();
+        });
+        indicatorsContainer.appendChild(dot);
+      });
+
+      const slides = container.querySelectorAll('.rotorama-slide');
+      const dots = indicatorsContainer.querySelectorAll('.indicator-dot');
+
+      function goToSlide(index) {
+        slides[currentIndex].classList.remove('active');
+        dots[currentIndex].classList.remove('active');
+        currentIndex = (index + slides.length) % slides.length;
+        slides[currentIndex].classList.add('active');
+        dots[currentIndex].classList.add('active');
+      }
+
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+
+      function restartTimer() {
+        if (timer) clearInterval(timer);
+        if (slides.length > 1) {
+          timer = setInterval(nextSlide, (CONFIG.intervalSeconds || 6) * 1000);
+        }
+      }
+
+      restartTimer();
+    })();
+
+    /* ========================================================================
+       CONVERSOR LIGERO DE MARKDOWN (.md) A HTML SIN LIBRERÍAS EXTERNAS
+       ======================================================================== */
+    function parseMarkdownToHTML(md) {
+      if (!md) return '';
+
+      const lines = md.trim().split('\n');
+      let html = '';
+      let inList = false;
+
+      function formatInline(text) {
+        return text
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+
+        if (!line) {
+          if (inList) {
+            html += '</ul>';
+            inList = false;
+          }
+          continue;
+        }
+
+        if (line.startsWith('### ')) {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<h3>${formatInline(line.slice(4))}</h3>`;
+        } else if (line.startsWith('## ')) {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<h2>${formatInline(line.slice(3))}</h2>`;
+        } else if (line.startsWith('# ')) {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<h1>${formatInline(line.slice(2))}</h1>`;
+        } else if (line.startsWith('> ')) {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<blockquote>${formatInline(line.slice(2))}</blockquote>`;
+        } else if (line.startsWith('- ') || line.startsWith('* ')) {
+          if (!inList) {
+            html += '<ul>';
+            inList = true;
+          }
+          html += `<li>${formatInline(line.slice(2))}</li>`;
+        } else {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<p>${formatInline(line)}</p>`;
+        }
+      }
+
+      if (inList) html += '</ul>';
+      return html;
+    }
+
+    /* ========================================================================
+       NAVEGACIÓN, MENÚ RESPONSIVE Y MODAL DE SECCIONES
+       ======================================================================== */
+    (function initNavigation() {
+      const menuToggle = document.getElementById('menuToggle');
+      const mainNav = document.getElementById('mainNav');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const modal = document.getElementById('mdModal');
+      const mdContent = document.getElementById('mdContent');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const logoHomeBtn = document.getElementById('logoHomeBtn');
+
+      // Abrir / cerrar menú en móvil y tablet
+      menuToggle.addEventListener('click', () => {
+        const isOpen = mainNav.classList.toggle('open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      function openSection(sectionKey) {
+        const rawMd = CONTENIDO_MD[sectionKey];
+        if (!rawMd) return;
+
+        mdContent.innerHTML = parseMarkdownToHTML(rawMd);
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+
+        navLinks.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.section === sectionKey);
+        });
+
+        // Cerrar menú móvil si estaba abierto
+        mainNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        navLinks.forEach((btn) => btn.classList.remove('active'));
+      }
+
+      navLinks.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          openSection(btn.dataset.section);
+        });
+      });
+
+      closeModalBtn.addEventListener('click', closeModal);
+
+      logoHomeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal();
+        mainNav.classList.remove('open');
+      });
+
+      // Cerrar al hacer clic fuera de la tarjeta o pulsar Escape
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
